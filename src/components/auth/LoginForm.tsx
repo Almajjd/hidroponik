@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,8 +23,8 @@ import { useToast } from "@/hooks/use-toast";
 
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  email: z.string().min(1, { message: "Email tidak boleh kosong." }),
+  password: z.string().min(1, { message: "Password tidak boleh kosong." }),
 });
 
 export default function LoginForm() {
@@ -45,10 +46,10 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       await login(values.email, values.password);
-      toast({ title: "Login Successful", description: "Welcome back!" });
+      toast({ title: "Login Berhasil", description: "Selamat datang kembali!" });
       router.push("/dashboard");
     } catch (error) {
-      toast({ title: "Login Failed", description: (error as Error).message || "Please check your credentials.", variant: "destructive" });
+      toast({ title: "Login Gagal", description: (error as Error).message || "Silakan periksa kredensial Anda.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +90,7 @@ export default function LoginForm() {
                     size="icon"
                     className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </Button>
@@ -105,13 +106,13 @@ export default function LoginForm() {
         </Button>
         <div className="text-sm text-center">
           <Link href="/reset-password" legacyBehavior>
-            <a className="font-medium text-primary hover:underline">Forgot password?</a>
+            <a className="font-medium text-primary hover:underline">Lupa password?</a>
           </Link>
         </div>
         <div className="text-sm text-center text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          Belum punya akun?{' '}
           <Link href="/registrasi" legacyBehavior>
-            <a className="font-medium text-primary hover:underline">Sign up</a>
+            <a className="font-medium text-primary hover:underline">Daftar</a>
           </Link>
         </div>
       </form>

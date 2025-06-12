@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,12 +22,12 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-  confirmPassword: z.string(),
+  name: z.string().min(1, { message: "Nama tidak boleh kosong." }),
+  email: z.string().min(1, { message: "Email tidak boleh kosong." }),
+  password: z.string().min(1, { message: "Password tidak boleh kosong." }),
+  confirmPassword: z.string().min(1, {message: "Konfirmasi password tidak boleh kosong."}),
 }).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Password tidak cocok.",
   path: ["confirmPassword"],
 });
 
@@ -52,10 +53,10 @@ export default function RegistrationForm() {
     setIsLoading(true);
     try {
       await register(values.email, values.password, values.name);
-      toast({ title: "Registration Successful", description: "You can now log in." });
-      router.push("/dashboard"); // Or /login, then user logs in
+      toast({ title: "Registrasi Berhasil", description: "Anda sekarang dapat login." });
+      router.push("/dashboard"); 
     } catch (error) {
-      toast({ title: "Registration Failed", description: (error as Error).message || "Could not create account.", variant: "destructive" });
+      toast({ title: "Registrasi Gagal", description: (error as Error).message || "Tidak dapat membuat akun.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -69,9 +70,9 @@ export default function RegistrationForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>Nama Lengkap</FormLabel>
               <FormControl>
-                <Input placeholder="Your Name" {...field} />
+                <Input placeholder="Nama Anda" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,7 +85,7 @@ export default function RegistrationForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="your@email.com" {...field} />
+                <Input placeholder="email@anda.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,7 +110,7 @@ export default function RegistrationForm() {
                     size="icon"
                     className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </Button>
@@ -124,7 +125,7 @@ export default function RegistrationForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>Konfirmasi Password</FormLabel>
               <FormControl>
                  <div className="relative">
                   <Input 
@@ -138,7 +139,7 @@ export default function RegistrationForm() {
                     size="icon"
                     className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                    aria-label={showConfirmPassword ? "Sembunyikan konfirmasi password" : "Tampilkan konfirmasi password"}
                   >
                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </Button>
@@ -150,12 +151,12 @@ export default function RegistrationForm() {
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Create Account
+          Buat Akun
         </Button>
         <div className="text-sm text-center text-muted-foreground">
-          Already have an account?{' '}
+          Sudah punya akun?{' '}
           <Link href="/login" legacyBehavior>
-            <a className="font-medium text-primary hover:underline">Log in</a>
+            <a className="font-medium text-primary hover:underline">Login</a>
           </Link>
         </div>
       </form>
