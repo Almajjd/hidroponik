@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -23,9 +24,10 @@ interface ScheduleDialogProps {
   onOpenChange: (isOpen: boolean) => void;
   device: DeviceControlInfo | null;
   onSaveSchedule: (settings: ScheduleSettings) => void;
+  disabled?: boolean;
 }
 
-export default function ScheduleDialog({ isOpen, onOpenChange, device, onSaveSchedule }: ScheduleDialogProps) {
+export default function ScheduleDialog({ isOpen, onOpenChange, device, onSaveSchedule, disabled = false }: ScheduleDialogProps) {
   const [startTime, setStartTime] = useState("08:00");
   const [endTime, setEndTime] = useState("18:00");
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -48,7 +50,7 @@ export default function ScheduleDialog({ isOpen, onOpenChange, device, onSaveSch
   };
 
   const handleSubmit = () => {
-    if (!device) return;
+    if (!device || disabled) return;
     if (selectedDays.length === 0) {
       toast({ title: "Peringatan", description: "Pilih setidaknya satu hari.", variant: "destructive"});
       return;
@@ -80,7 +82,7 @@ export default function ScheduleDialog({ isOpen, onOpenChange, device, onSaveSch
             Pilih waktu dan hari untuk {device.name} menyala secara otomatis.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <fieldset disabled={disabled} className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="start-time">Waktu Mulai</Label>
@@ -106,10 +108,10 @@ export default function ScheduleDialog({ isOpen, onOpenChange, device, onSaveSch
               ))}
             </div>
           </div>
-        </div>
+        </fieldset>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
-          <Button type="button" onClick={handleSubmit}>Simpan Jadwal</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={disabled}>Batal</Button>
+          <Button type="button" onClick={handleSubmit} disabled={disabled}>Simpan Jadwal</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

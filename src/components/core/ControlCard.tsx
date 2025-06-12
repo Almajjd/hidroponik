@@ -1,3 +1,4 @@
+
 import type { DeviceControlInfo } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,13 +12,18 @@ interface ControlCardProps {
   onToggle: (id: string, isOn: boolean) => void;
   onScheduleClick?: (id: string) => void;
   onDoseClick?: (id: string) => void;
+  disabled?: boolean;
 }
 
-export default function ControlCard({ device, onToggle, onScheduleClick, onDoseClick }: ControlCardProps) {
+export default function ControlCard({ device, onToggle, onScheduleClick, onDoseClick, disabled = false }: ControlCardProps) {
   const Icon = device.icon;
 
   return (
-    <Card className={cn("shadow-lg rounded-xl overflow-hidden transition-all hover:shadow-xl", device.isOn ? "border-primary/50 bg-primary/5" : "bg-card")}>
+    <Card className={cn(
+        "shadow-lg rounded-xl overflow-hidden transition-all hover:shadow-xl", 
+        device.isOn ? "border-primary/50 bg-primary/5" : "bg-card",
+        disabled && "opacity-60 cursor-not-allowed"
+      )}>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3 pt-4 px-4">
         <div className="flex items-center gap-3">
           <Icon className={cn("h-7 w-7", device.isOn ? "text-primary" : "text-muted-foreground")} />
@@ -32,6 +38,7 @@ export default function ControlCard({ device, onToggle, onScheduleClick, onDoseC
                 checked={device.isOn}
                 onCheckedChange={(checked) => onToggle(device.id, checked)}
                 aria-label={`Toggle ${device.name}`}
+                disabled={disabled}
             />
         </div>
       </CardHeader>
@@ -43,13 +50,25 @@ export default function ControlCard({ device, onToggle, onScheduleClick, onDoseC
       {(device.schedulable || device.dosable) && (
         <CardFooter className="px-4 pb-4 pt-2 flex flex-col sm:flex-row gap-2">
           {device.schedulable && onScheduleClick && (
-            <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => onScheduleClick(device.id)}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full sm:w-auto" 
+              onClick={() => onScheduleClick(device.id)}
+              disabled={disabled}
+            >
               <Settings className="mr-2 h-4 w-4" />
               Atur Jadwal
             </Button>
           )}
           {device.dosable && onDoseClick && (
-             <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => onDoseClick(device.id)}>
+             <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full sm:w-auto" 
+              onClick={() => onDoseClick(device.id)}
+              disabled={disabled}
+            >
               <PlusCircle className="mr-2 h-4 w-4" />
               Dosis Manual
             </Button>

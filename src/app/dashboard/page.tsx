@@ -82,7 +82,7 @@ export default function DashboardPage() {
         });
       };
     }
-  }, [mqttContext, sensorData, handleSensorUpdate]); // sensorData dependency to re-subscribe if topics change (e.g. dynamic sensors)
+  }, [mqttContext?.isConnected, mqttContext?.subscribe, mqttContext?.unsubscribe]);// sensorData dependency to re-subscribe if topics change (e.g. dynamic sensors)
 
   return (
     <AuthenticatedLayout title="Hidroponik Dashboard">
@@ -105,7 +105,7 @@ export default function DashboardPage() {
 
         <section>
           <h2 className="text-xl font-semibold mb-4 text-foreground">Akses Cepat</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <Button variant="outline" size="lg" className="w-full justify-start text-left h-auto py-4 shadow-md rounded-lg" asChild>
               <Link href="/kontrol">
                 <SlidersHorizontal className="mr-3 h-6 w-6 text-primary" />

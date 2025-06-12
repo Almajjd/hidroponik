@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -21,13 +22,12 @@ interface NutrientDosingDialogProps {
   onOpenChange: (isOpen: boolean) => void;
   device: DeviceControlInfo | null; // Typically the nutrient pump
   onSaveDoseSettings: (settings: NutrientDoseSettings) => void;
+  disabled?: boolean;
 }
 
-export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onSaveDoseSettings }: NutrientDosingDialogProps) {
+export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onSaveDoseSettings, disabled = false }: NutrientDosingDialogProps) {
   const [doseAmount, setDoseAmount] = useState<number>(10); // Default 10ml
   const [dosingType, setDosingType] = useState<"manual" | "parameter">("manual");
-  // const [targetParameter, setTargetParameter] = useState<'ph' | 'ec'>('ec');
-  // const [threshold, setThreshold] = useState<number>(1.5);
 
   const { toast } = useToast();
 
@@ -39,7 +39,7 @@ export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onS
   }, [isOpen, device]);
 
   const handleSubmit = () => {
-    if (!device) return;
+    if (!device || disabled) return;
     if (doseAmount <= 0) {
       toast({ title: "Peringatan", description: "Jumlah dosis harus lebih dari 0.", variant: "destructive"});
       return;
@@ -48,14 +48,11 @@ export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onS
     const settings: NutrientDoseSettings = {
       amount: doseAmount,
     };
-
-    // if (dosingType === "parameter") {
-    //   settings.parameter = targetParameter;
-    //   settings.threshold = threshold;
-    // }
     
     onSaveDoseSettings(settings);
-    toast({ title: "Dosis Disiapkan", description: `Dosis ${doseAmount}ml untuk ${device.name} telah diatur (simulasi).` });
+    // Toast for successful submission is now handled in KontrolPage after MQTT publish (if applicable)
+    // or here if it's just a UI simulation
+    // toast({ title: "Dosis Disiapkan", description: `Dosis ${doseAmount}ml untuk ${device.name} telah diatur.` });
     onOpenChange(false);
   };
 
@@ -70,7 +67,7 @@ export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onS
             Atur jumlah nutrisi yang akan ditambahkan.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <fieldset disabled={disabled} className="grid gap-4 py-4">
           <div>
             <Label htmlFor="dose-amount">Jumlah Dosis (ml)</Label>
             <Input 
@@ -81,9 +78,6 @@ export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onS
               min="1"
             />
           </div>
-
-          {/* Future: Automatic dosing based on parameters */}
-          {/* For now, only manual dosing is implemented as per "tombol untuk memicu dosis nutrisi manual" */}
            <div>
             <Label>Tipe Dosis</Label>
             <RadioGroup defaultValue="manual" value={dosingType} onValueChange={(value: "manual" | "parameter") => setDosingType(value)} className="mt-2">
@@ -91,38 +85,12 @@ export default function NutrientDosingDialog({ isOpen, onOpenChange, device, onS
                 <RadioGroupItem value="manual" id="manual-dose" />
                 <Label htmlFor="manual-dose" className="font-normal">Manual</Label>
               </div>
-              {/* <div className="flex items-center space-x-2 opacity-50 cursor-not-allowed">
-                <RadioGroupItem value="parameter" id="parameter-dose" disabled />
-                <Label htmlFor="parameter-dose" className="font-normal">Berdasarkan Parameter (Segera Hadir)</Label>
-              </div> */}
             </RadioGroup>
           </div>
-
-          {/* {dosingType === "parameter" && (
-            <>
-              <div>
-                <Label>Parameter Target</Label>
-                <Select value={targetParameter} onValueChange={(value: 'ph' | 'ec') => setTargetParameter(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih parameter" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ec">EC Nutrisi</SelectItem>
-                    <SelectItem value="ph">pH Air</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="threshold">Ambang Batas Target</Label>
-                <Input id="threshold" type="number" step="0.1" value={threshold} onChange={e => setThreshold(parseFloat(e.target.value))} />
-              </div>
-            </>
-          )} */}
-
-        </div>
+        </fieldset>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Batal</Button>
-          <Button type="button" onClick={handleSubmit}>Terapkan Dosis</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={disabled}>Batal</Button>
+          <Button type="button" onClick={handleSubmit} disabled={disabled}>Terapkan Dosis</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
