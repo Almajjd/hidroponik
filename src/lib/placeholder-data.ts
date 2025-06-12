@@ -1,18 +1,37 @@
-import type { SensorData, DeviceControlInfo, HistoricalDataPoint, NotificationMessage, ChartConfig } from './types';
+import type { SensorData, DeviceControlInfo, HistoricalDataPoint, NotificationMessage, ChartConfig, SensorStatus } from './types';
 import { Thermometer, Zap, Droplets, Waves, Lightbulb, Atom, AlertTriangle, Info, CheckCircle, BarChart, Settings, Power } from 'lucide-react';
 
+// Helper functions to determine status based on value
+const getPhStatus = (value: number): SensorStatus => {
+  if (value < 5.5 || value > 7.0) return 'critical';
+  if (value < 6.0 || value > 6.5) return 'warning';
+  return 'optimal';
+};
+
+const getEcStatus = (value: number): SensorStatus => {
+  if (value < 1.0 || value > 2.5) return 'critical';
+  if (value < 1.2 || value > 2.0) return 'warning';
+  return 'optimal';
+};
+
+const getTempStatus = (value: number): SensorStatus => {
+  if (value < 18 || value > 28) return 'warning';
+  return 'neutral'; // Or 'optimal' if preferred for normal range
+};
+
+
 export const mockSensorData: SensorData[] = [
-  { id: 'ph', name: 'pH Air', value: 6.2, unit: '', status: 'optimal', icon: Atom, lastUpdated: 'Now' },
-  { id: 'ec', name: 'EC Nutrisi', value: 1.8, unit: 'mS/cm', status: 'optimal', icon: Zap, lastUpdated: 'Now' },
-  { id: 'temp', name: 'Suhu Air', value: 24, unit: '°C', status: 'neutral', icon: Thermometer, lastUpdated: 'Now' },
-  { id: 'level', name: 'Tinggi Air', value: 'Normal', unit: '', status: 'normal', icon: Waves, lastUpdated: 'Now' },
-  { id: 'light', name: 'Intensitas Cahaya', value: 'ON', unit: '', status: 'on', icon: Lightbulb, lastUpdated: 'Now' },
+  { id: 'ph', name: 'pH Air', value: 6.2, unit: '', status: 'optimal', icon: Atom, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/ph', getStatus: getPhStatus },
+  { id: 'ec', name: 'EC Nutrisi', value: 1.8, unit: 'mS/cm', status: 'optimal', icon: Zap, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/ec', getStatus: getEcStatus },
+  { id: 'temp', name: 'Suhu Air', value: 24, unit: '°C', status: 'neutral', icon: Thermometer, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/temp', getStatus: getTempStatus },
+  { id: 'level', name: 'Tinggi Air', value: 'Normal', unit: '', status: 'normal', icon: Waves, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/level' /*getStatus for string value might need specific logic*/ },
+  { id: 'light', name: 'Intensitas Cahaya', value: 'ON', unit: '', status: 'on', icon: Lightbulb, lastUpdated: 'Initial', mqttTopic: 'hydroponics/device/light/status' },
 ];
 
 export const mockDeviceControls: DeviceControlInfo[] = [
-  { id: 'pump', name: 'Pompa Air', icon: Power, isOn: true, schedulable: true },
-  { id: 'growlight', name: 'Lampu Tumbuh', icon: Lightbulb, isOn: true, schedulable: true },
-  { id: 'nutrientpump', name: 'Dosis Nutrisi', icon: Droplets, isOn: false, dosable: true },
+  { id: 'pump', name: 'Pompa Air', icon: Power, isOn: true, schedulable: true, mqttControlTopic: 'hydroponics/device/pump/set' },
+  { id: 'growlight', name: 'Lampu Tumbuh', icon: Lightbulb, isOn: true, schedulable: true, mqttControlTopic: 'hydroponics/device/growlight/set' },
+  { id: 'nutrientpump', name: 'Dosis Nutrisi', icon: Droplets, isOn: false, dosable: true, mqttControlTopic: 'hydroponics/device/nutrientpump/set' },
 ];
 
 const generateHistoricalData = (days: number, baseValue: number, variation: number): HistoricalDataPoint[] => {

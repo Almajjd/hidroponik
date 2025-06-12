@@ -15,7 +15,10 @@ export interface SensorData {
   unit?: string;
   status: SensorStatus;
   icon: LucideIcon;
-  lastUpdated?: string; // Optional for now
+  lastUpdated?: string;
+  mqttTopic?: string; // Topic to subscribe to for real-time updates
+  // Optional functions to determine status from a numeric value
+  getStatus?: (value: number) => SensorStatus;
 }
 
 export interface DeviceControlInfo {
@@ -25,6 +28,7 @@ export interface DeviceControlInfo {
   isOn: boolean;
   schedulable?: boolean;
   dosable?: boolean; 
+  mqttControlTopic?: string; // Topic to publish commands
 }
 
 export interface HistoricalDataPoint {
