@@ -1,3 +1,4 @@
+
 "use client";
 import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout';
 import StatusCard from '@/components/core/StatusCard';
@@ -84,7 +85,7 @@ export default function DashboardPage() {
   }, [mqttContext, sensorData, handleSensorUpdate]); // sensorData dependency to re-subscribe if topics change (e.g. dynamic sensors)
 
   return (
-    <AuthenticatedLayout title="Dashboard Utama">
+    <AuthenticatedLayout title="Hidroponik Dashboard">
       <div className="space-y-6">
         <section>
           <div className="flex justify-between items-center mb-4">
@@ -95,7 +96,7 @@ export default function DashboardPage() {
                </span>
             )}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {sensorData.map((sensor) => (
               <StatusCard key={sensor.id} sensor={sensor} />
             ))}
@@ -104,7 +105,7 @@ export default function DashboardPage() {
 
         <section>
           <h2 className="text-xl font-semibold mb-4 text-foreground">Akses Cepat</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Button variant="outline" size="lg" className="w-full justify-start text-left h-auto py-4 shadow-md rounded-lg" asChild>
               <Link href="/kontrol">
                 <SlidersHorizontal className="mr-3 h-6 w-6 text-primary" />
