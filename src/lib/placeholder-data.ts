@@ -19,12 +19,18 @@ const getTempStatus = (value: number): SensorStatus => {
   return 'neutral'; // Or 'optimal' if preferred for normal range
 };
 
+const getLevelStatus = (value: number): SensorStatus => {
+    if (value < 20) return 'critical';
+    if (value < 40) return 'warning';
+    return 'normal';
+};
+
 
 export const mockSensorData: SensorData[] = [
   { id: 'ph', name: 'pH Air', value: 6.2, unit: '', status: 'optimal', icon: Atom, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/ph', getStatus: getPhStatus },
   { id: 'ec', name: 'EC Nutrisi', value: 1.8, unit: 'mS/cm', status: 'optimal', icon: Zap, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/ec', getStatus: getEcStatus },
   { id: 'temp', name: 'Suhu Air', value: 24, unit: '°C', status: 'neutral', icon: Thermometer, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/temp', getStatus: getTempStatus },
-  { id: 'level', name: 'Tinggi Air', value: 'Normal', unit: '', status: 'normal', icon: Waves, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/level' /*getStatus for string value might need specific logic*/ },
+  { id: 'level', name: 'Tinggi Air', value: 75, unit: '%', status: 'normal', icon: Waves, lastUpdated: 'Initial', mqttTopic: 'hydroponics/sensor/level', getStatus: getLevelStatus },
   { id: 'light', name: 'Intensitas Cahaya', value: 'ON', unit: '', status: 'on', icon: Lightbulb, lastUpdated: 'Initial', mqttTopic: 'hydroponics/device/light/status' },
 ];
 

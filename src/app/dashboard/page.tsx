@@ -2,6 +2,7 @@
 "use client";
 import AuthenticatedLayout from '@/components/layouts/AuthenticatedLayout';
 import StatusCard from '@/components/core/StatusCard';
+import RadialGauge from '@/components/core/RadialGauge';
 import { mockSensorData as initialSensorData } from '@/lib/placeholder-data';
 import type { SensorData, SensorStatus } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -82,7 +83,11 @@ export default function DashboardPage() {
         });
       };
     }
-  }, [mqttContext?.isConnected, mqttContext?.subscribe, mqttContext?.unsubscribe]);// sensorData dependency to re-subscribe if topics change (e.g. dynamic sensors)
+  }, [mqttContext?.isConnected, mqttContext?.subscribe, mqttContext?.unsubscribe, handleSensorUpdate, sensorData]);
+
+  // Separate sensor data for different parts of the UI
+  const statusCardSensors = sensorData.filter(s => s.id !== 'level');
+  const waterLevelSensor = sensorData.find(s => s.id === 'level');
 
   return (
     <AuthenticatedLayout title="Hidroponik Dashboard">
@@ -96,16 +101,23 @@ export default function DashboardPage() {
                </span>
             )}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {sensorData.map((sensor) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {statusCardSensors.map((sensor) => (
               <StatusCard key={sensor.id} sensor={sensor} />
             ))}
           </div>
         </section>
 
+        {waterLevelSensor && typeof waterLevelSensor.value === 'number' && (
+          <section className="flex flex-col items-center justify-center py-4">
+              <h2 className="text-xl font-semibold text-foreground mb-4">Tinggi Air</h2>
+              <RadialGauge value={waterLevelSensor.value} />
+          </section>
+        )}
+
         <section>
           <h2 className="text-xl font-semibold mb-4 text-foreground">Akses Cepat</h2>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button variant="outline" size="lg" className="w-full justify-start text-left h-auto py-4 shadow-md rounded-lg" asChild>
               <Link href="/kontrol">
                 <SlidersHorizontal className="mr-3 h-6 w-6 text-primary" />
