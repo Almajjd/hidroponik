@@ -91,10 +91,10 @@ export default function DashboardPage() {
 
   return (
     <AuthenticatedLayout title="Hidroponik Dashboard">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <section>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-foreground">Status Sistem Real-Time</h2>
+            <h2 className="text-xl font-semibold text-foreground">Status Sistem</h2>
             {mqttContext && (
                  <span className={`text-xs px-2 py-1 rounded-full ${mqttContext.isConnected ? 'bg-green-500/20 text-green-700' : 'bg-red-500/20 text-red-700'}`}>
                  MQTT: {mqttContext.isConnected ? 'Terhubung' : 'Terputus'}
@@ -109,13 +109,13 @@ export default function DashboardPage() {
         </section>
 
         {waterLevelSensor && typeof waterLevelSensor.value === 'number' && (
-          <section className="flex flex-col items-center justify-center py-4">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Tinggi Air</h2>
-              <RadialGauge value={waterLevelSensor.value} />
+          <section className="flex flex-col items-center justify-center py-2">
+              <h2 className="text-lg font-semibold text-foreground mb-2">Tinggi Air</h2>
+              <RadialGauge value={waterLevelSensor.value} size={220} />
           </section>
         )}
 
-        <section>
+        <section className="hidden md:block">
           <h2 className="text-xl font-semibold mb-4 text-foreground">Akses Cepat</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button variant="outline" size="lg" className="w-full justify-start text-left h-auto py-4 shadow-md rounded-lg" asChild>
